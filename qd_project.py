@@ -2,10 +2,12 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/")
-def hello_world():
-    return "Welcome to QD exam homepage! Credits to Maugeri, Giancarmelo, Ignazio"
+HOME_LABEL = "Welcome to QD exam homepage! Credits to Maugeri, Giancarmelo, Ignazio"
 
+@app.route("/")
+def home():
+    return HOME_LABEL
+    
 '''
     API to fetch today weather for city
     URL param: city (string)
