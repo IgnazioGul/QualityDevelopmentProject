@@ -2,7 +2,7 @@
 ## Development
 Gitflow must be used during development process.
 We will use following branches:
-- **master** PRODUCTION-READY code
+- **master** for PRODUCTION-READY code
 - **develop** for TEST-READY code
 - **feature branches** for active feature development (https://devdev.it/guida-gitflow/feature-branch-nuove-funzionalita/).
 
