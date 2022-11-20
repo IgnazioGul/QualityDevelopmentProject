@@ -1,5 +1,5 @@
 from src.weather import WeatherCall
-API_KEY = "3f4da8251bb13dc76d98887324ae70bd"
+API_KEY = ""
 
 
 def test_checkKey():
