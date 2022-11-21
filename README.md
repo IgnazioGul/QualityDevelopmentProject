@@ -28,8 +28,12 @@ When a new feature is completed and ready for testing, a pull request to develop
 ```venv\Scripts\activate```
 
   
-
-```pip install -r requirements.txt```
+```
+pip install -r requirements_dev.txt
+```
+```
+pip install -r requirements.txt
+```
 
   
 
@@ -43,5 +47,6 @@ When a new feature is completed and ready for testing, a pull request to develop
 
 Add unit-test to ./tests, then run:
 ```
-pytest .\tests.py
+pytest --cov src tests/ --cov-report=html --cov-fail-under=75
 ```
+Please note that you cannot push a projecy version that has <75% code coverage.
