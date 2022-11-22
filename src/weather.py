@@ -18,7 +18,7 @@ class WeatherCall:
         if(response.status_code == 401): raise TypeError("invalid Key")
 
     def get_coordinates(self, city, limit):
-        response = requests.get(f"{OPEN_WEATHER_GEO} q={city}&limit={limit}&appid={self.key}")
+        response = requests.get(f"{OPEN_WEATHER_GEO}q={city}&limit={limit}&appid={self.key}")
         if(response.status_code == 401): raise TypeError("error call")
         return response.json()
 
