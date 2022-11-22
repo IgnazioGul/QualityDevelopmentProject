@@ -12,16 +12,16 @@ class WeatherCall:
     def __init__(self, key):
         self.key = key
 
-    def checkKey(self):
+    def checkKey(self) -> None:
         response = requests.get(OPEN_WEATHER_CHECK + self.key)
         if(response.status_code == 401): raise TypeError("invalid Key")
 
-    def get_coordinates(self, city, limit = 5):
+    def get_coordinates(self, city: str, limit: int) -> dict:
         response = requests.get(f"{OPEN_WEATHER_GEO}q={city}&limit={limit}&appid={self.key}")
         if(response.status_code == 401): raise TypeError("error call")
         return response.json()
 
-    def get_weather(self, lat, lon):
+    def get_weather(self, lat: float, lon: float) -> dict:
         response = requests.get(f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&appid={self.key}")
         if(response.status_code == 401): raise TypeError("error call")
         return response.json()
