@@ -27,7 +27,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the inline query. This is run when you type: @melo <query>"""
+    """Handle the inline query. This is run when you type: @meteounicitbot <query>"""
     query = update.inline_query.query
 
     if query == "":
