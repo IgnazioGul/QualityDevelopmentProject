@@ -11,24 +11,20 @@ OPEN_WEATHER_CITY = os.getenv('OPEN_WEATHER_CITY')
 class WeatherCall:
 
     def __init__( self, key: str ) -> None:
-        """costruct""" 
         self.key = key
 
     def check_key( self ) -> None:
-        """check the api key"""
         response = requests.get( OPEN_WEATHER_CHECK + self.key, timeout=10 )
         if response.status_code == 401: 
             raise TypeError( "Invalid Key" )
 
     def get_coordinates( self, city: str, limit: int ) -> dict:
-        """get coordinates by city name"""
         response = requests.get( f"{OPEN_WEATHER_GEO}q={city}&limit={limit}&appid={self.key}", timeout=10 )
         if response.status_code == 401: 
             raise TypeError( "Error Call" )
         return response.json()
 
     def get_weather( self, lat: float, lon: float ) -> dict:
-        """get weather by latitune and longitudine"""
         response = requests.get( f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&appid={self.key}", timeout=10 )
         if response.status_code == 401: 
             raise TypeError( "Error Call" )
