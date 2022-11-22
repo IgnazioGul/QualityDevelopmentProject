@@ -2,7 +2,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from telegram.ext import CommandHandler, ApplicationBuilder, InlineQueryHandler
-from src.telegram import start, inline_query
+from src.telegram_handle import start, inline_query
 
 # Enable logging
 logging.basicConfig(

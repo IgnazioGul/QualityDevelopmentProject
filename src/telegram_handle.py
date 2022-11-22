@@ -35,7 +35,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     results = []
     locations = weatherCall.get_coordinates(query)
-
+  
     for location in locations:
         results.append(
             InlineQueryResultArticle(
