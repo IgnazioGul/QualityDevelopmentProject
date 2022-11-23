@@ -71,3 +71,4 @@ def test_get_weather_fail(mocker):
     with pytest.raises(TypeError):
         #act
         m.get_weather(41.8933203, 12.4829321)
+        
