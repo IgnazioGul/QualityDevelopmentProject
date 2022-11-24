@@ -18,5 +18,5 @@ def geo(key,city,limit):
     return res
 
 def weather(key,lat,lon):
-    res = requests.get(f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&appid={key}", timeout=10).json()
+    res = requests.get(f"{OPEN_WEATHER_CITY}units=metric&lat={lat}&lon={lon}&appid={key}", timeout=10).json()
     return res
