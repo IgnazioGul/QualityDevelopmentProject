@@ -1,9 +1,16 @@
-from telegram import InputTextMessageContent, InlineQueryResultArticle, InlineKeyboardButton, Update, InlineKeyboardMarkup
-from telegram.ext import ContextTypes
+from telegram import InputTextMessageContent, InlineQueryResultArticle, Update
+from telegram.ext import ContextTypes, ConversationHandler
 from uuid import uuid4
-from src.weather import WeatherCall
+from .weather import WeatherCall
 import os
 from dotenv import load_dotenv
+import logging
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 # init dot env
 load_dotenv()
@@ -15,27 +22,20 @@ OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
 weatherCall = WeatherCall(OPEN_WEATHER_KEY)
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """ Sends a message with three inline button attached. """
-
-    keyboard = [[InlineKeyboardButton(
-        'Inizia la ricerca', switch_inline_query_current_chat="")]]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    await update.message.reply_text('Benvenuto in weater_bot, rimani aggiornato sul meteo con pochi click', reply_markup=reply_markup)
-
-
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the inline query. This is run when you type: @meteounicitbot <query>"""
+    """ Handle the inline query. This is run when you type: @meteounicitbot <query>"""
     query = update.inline_query.query
 
     if query == "":
         return
 
     results = []
-    locations = weatherCall.get_coordinates(query)
-  
+    locations = None
+    try:
+        locations = weatherCall.get_coordinates(query, 5)
+    except TypeError:
+        locations = []
+
     for location in locations:
         results.append(
             InlineQueryResultArticle(
@@ -44,8 +44,83 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                 thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Weather-sun-clouds-rain.svg/640px-Weather-sun-clouds-rain.svg.png",
                 thumb_width=180,
                 thumb_height=180,
-                input_message_content=InputTextMessageContent(query.upper()),
+                input_message_content=InputTextMessageContent(
+                    f"{location['lat']},{location['lon']}"),
             ),
         )
 
     await update.inline_query.answer(results)
+
+
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Parses the CallbackQuery and updates the message text."""
+    query = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    await query.answer()
+
+    await query.edit_message_text(text=f"Selected option: {query.data}")
+
+
+async def delete_message(update: Update, context: ContextTypes.DEFAULT_TYPE, chat_id: int) -> int:
+    user = update.message.from_user
+    logger.info("edit of %s: %s", user.first_name, update.message.text)
+
+    update.message.delete(chat_id=chat_id,
+                          message_id='IM STUCK HERE')  # INPUT HERE
+
+    return ConversationHandler.END
+
+
+meteo_prop = {
+    'coord': {'lon': 15.0874, 'lat': 37.5024},
+    'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}],
+    'base': 'stations',
+    'main': {'temp': 18.86, 'feels_like': 18.79, 'temp_min': 16, 'temp_max': 21.38, 'pressure': 1014, 'humidity': 76},
+    'visibility': 10000,
+    'wind': {'speed': 2.06, 'deg': 0},
+    'clouds': {'all': 0},
+    'dt': 1669279345,
+    'sys': {'type': 2, 'id': 2004061, 'country': 'IT', 'sunrise': 1669268916, 'sunset': 1669304660},
+    'timezone': 3600,
+    'id': 2525068,
+    'name': 'Catania',
+    'cod': 200}
+
+
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Ask the user for info about the selected predefined choice."""
+    text = update.message.text
+    coordinate = str(text).split(",")
+    meteo = weatherCall.get_weather(coordinate[0], coordinate[1])
+    weather = meteo['weather'][0]
+
+    message = get_message(meteo)
+
+    await update.message.reply_photo(f"https://source.unsplash.com/random?{meteo['name']}+{weather['description']}", f"{weather['description']}")
+
+    await update.message.reply_text(message)
+
+
+def get_message(meteo: meteo_prop) -> str:
+    main = meteo['main']
+    message = ""
+    if 'name' in meteo:
+        message += f"Che tempo fa a {meteo['name']}?\n"
+    if 'temp' in main:
+        message += f"temp.: {main['temp']} C° 🌡\n"
+    if 'feels_like' in main:
+        message += f"temp. avvertita: {main['feels_like']} C° 🌡\n"
+    if 'temp_min' in main:
+        message += f"temp. min: {main['temp_min']} C° 🧊\n"
+    if 'temp_max' in main:
+        message += f"temp. max: {main['temp_max']} C° 🔥\n"
+    if 'pressure' in main:
+        message += f"pressione: {main['pressure']}\n"
+    if 'temp_max' in main:
+        message += f"umidità: {main['humidity']}% 💧\n"
+    if 'sea_level' in main:
+        message += f"livello del mare: {main['sea_level']} 🌊\n"
+
+    return message
