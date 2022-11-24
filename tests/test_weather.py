@@ -1,38 +1,74 @@
+from src import call
 from src.weather import WeatherCall
 from pytest_mock import MockerFixture
+import pytest
 
-def test_checkKey():
-    pass
 
-def test_coordinates_full(mocker):
+def test_check_key_passes(mocker):
     #arrage
-    mock_json_return = [{"name":"Rome","local_names":{"gd":"An Ròimh","mt":"Ruma","sr":"Рим","kl":"Roma","pl":"Rzym","lb":"Roum","fr":"Rome","tg":"Рим","ks":"روم","es":"Roma","ko":"로마","io":"Roma","nn":"Roma","ga":"An Róimh","de":"Rom","fo":"Róm","id":"Roma","sh":"Rim","mi":"Rōma","no":"Roma","su":"Roma","rm":"Roma","uk":"Рим","ku":"Roma","bn":"রোম","gn":"Róma","yo":"Rómù","bi":"Rome","hu":"Róma","qu":"Roma","en":"Rome","sw":"Roma","tl":"Roma","lt":"Roma","cr":"ᖌᒪ","ca":"Roma","ay":"Roma","he":"רומא","cs":"Řím","el":"Ρώμη","ml":"റോം","ro":"Roma","sg":"Rome","na":"Roma","se":"Roma","et":"Rooma","eo":"Romo","vo":"Roma","sq":"Roma","lv":"Roma","kv":"Рим","hr":"Rim","my":"ရောမမြို့","ne":"रोम","ia":"Roma","fy":"Rome","bg":"Рим","mr":"रोम","rn":"Roma","tk":"Rim","ht":"Ròm","co":"Roma","ee":"Rome","fa":"رم","sa":"रोमा","vi":"Rô-ma","eu":"Erroma","zh":"羅馬/罗马","da":"Rom","af":"Rome","mn":"Ром","cy":"Rhufain","jv":"Roma","az":"Roma","ar":"روما","nl":"Rome","bo":"རོ་མ།","an":"Roma","it":"Roma","hi":"रोम","si":"රෝමය","be":"Рым","cv":"Рим","tt":"Рим","ru":"Рим","ur":"روم","gl":"Roma","so":"Roma","uz":"Rim","gv":"Yn Raue","li":"Roeme","rw":"Roma","la":"Roma","ka":"რომი","mk":"Рим","fi":"Rooma","ie":"Roma","am":"ሮማ","pt":"Roma","sl":"Rim","sc":"Roma","br":"Roma","kk":"Рим","te":"రోమ్","sd":"روم","ty":"Roma","sv":"Rom","kn":"ರೋಮ","th":"โรม","cu":"Римъ","yi":"רוים","tr":"Roma","ja":"ローマ","ta":"உரோமை நகரம்","hy":"Հռոմ","ln":"Roma","mg":"Roma","bs":"Rim","os":"Ром","oc":"Roma","sk":"Rím","ba":"Рим","is":"Róm","ug":"رىم"},"lat":41.8933203,"lon":12.4829321,"country":"IT","state":"Lazio"},{"name":"Roma","lat":26.4070669,"lon":-99.0055462,"country":"US","state":"Texas"},{"name":"Roma","lat":-26.5674,"lon":148.78751,"country":"AU","state":"Queensland"},{"name":"Roma","local_names":{"ro":"Roma","uk":"Рома"},"lat":47.836931,"lon":26.6129285,"country":"RO"},{"name":"Roma","lat":-31.642912,"lon":-60.7255422,"country":"AR","state":"Santa Fe"}]
-    mocker.patch.object(WeatherCall, "get_coordinates", return_value = mock_json_return )
+    mock_json_return = 200
+    mocker.patch.object(call, "check", return_value = mock_json_return )
     m = WeatherCall('test')
-    #act
-    res = m.get_coordinates("roma") 
     #assert
-    assert res == mock_json_return
+    with pytest.raises(TypeError):
+        #act
+        m.check_key()
 
 
-def test_coordinates_empty(mocker):
+def test_check_key_fail(mocker):
     #arrage
-    mock_json_return = []
-    mocker.patch.object(WeatherCall.get_coordinates, "response", return_value = mock_json_return )
+    mock_json_return = 401
+    mocker.patch.object(call, "check", return_value = mock_json_return )
     m = WeatherCall('test')
-    #act
-    res = m.get_coordinates("roma") 
     #assert
-    assert res == None
+    with pytest.raises(TypeError):
+        #act
+        m.check_key()
 
-#     weather_roma = {"coord":{"lon":12.4754,"lat":41.8933},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}],"base":"stations","main":{"temp":286.21,"feels_like":285.24,"temp_min":283.97,"temp_max":287.23,"pressure":1006,"humidity":64},"visibility":10000,"wind":{"speed":4.63,"deg":360},"clouds":{"all":0},"dt":1668962842,"sys":{"type":2,"id":2037790,"country":"IT","sunrise":1668924339,"sunset":1668959162},"timezone":3600,"id":3169070,"name":"Rome","cod":200}
 
-def test_weather_empty(mocker):
-    #arrage 
-     mock_json_return = []
-     mocker.patch.object(WeatherCall, "get_weather", return_value = mock_json_return )
-     m = WeatherCall('test')
-      #act
-     res = m.get_weather(0, 0)
-     #assert
-     assert res == None
+
+def test_get_coordinates_passes(mocker):
+    #arrage
+    mock_json_return = [{"name":"Rome","local_names":{"nl":"Rome","eu":"Erroma","am":"ሮማ","pt":"Roma","af":"Rome","fy":"Rome","mr":"रोम","cv":"Рим","sg":"Rome","ja":"ローマ","pl":"Rzym","hy":"Հռոմ","kl":"Roma","sq":"Roma","ks":"روم","ia":"Roma","mg":"Roma","id":"Roma","ca":"Roma","ko":"로마","ga":"An Róimh","es":"Roma","th":"โรม","he":"רומא","se":"Roma","ml":"റോം","cu":"Римъ","uz":"Rim","da":"Rom","lb":"Roum","tg":"Рим","bg":"Рим","sr":"Рим","hi":"रोम","my":"ရောမမြို့","mt":"Ruma","mk":"Рим","fr":"Rome","cr":"ᖌᒪ","nn":"Roma","so":"Roma","ie":"Roma","oc":"Roma","gn":"Róma","bi":"Rome","cy":"Rhufain","be":"Рым","sv":"Rom","ne":"रोम","sh":"Rim","mi":"Rōma","os":"Ром","ar":"روما","sa":"रोमा","lv":"Roma","ee":"Rome","tk":"Rim","en":"Rome","ru":"Рим","ty":"Roma","la":"Roma","ka":"რომი","yo":"Rómù","io":"Roma","uk":"Рим","de":"Rom","fi":"Rooma","gd":"An Ròimh","si":"රෝමය","rn":"Roma","vo":"Roma","no":"Roma","sc":"Roma","et":"Rooma","fa":"رم","ku":"Roma","ht":"Ròm","it":"Roma","gv":"Yn Raue","rw":"Roma","ta":"உரோமை நகரம்","tr":"Roma","kk":"Рим","sk":"Rím","te":"రోమ్","qu":"Roma","sw":"Roma","kn":"ರೋಮ","ay":"Roma","su":"Roma","lt":"Roma","bs":"Rim","kv":"Рим","is":"Róm","yi":"רוים","rm":"Roma","an":"Roma","gl":"Roma","hr":"Rim","el":"Ρώμη","ur":"روم","li":"Roeme","sl":"Rim","tl":"Roma","ug":"رىم","sd":"روم","az":"Roma","zh":"羅馬/罗马","fo":"Róm","co":"Roma","bo":"རོ་མ།","mn":"Ром","vi":"Rô-ma","tt":"Рим","bn":"রোম","ba":"Рим","br":"Roma","ln":"Roma","hu":"Róma","jv":"Roma","cs":"Řím","ro":"Roma","na":"Roma","eo":"Romo"},"lat":41.8933203,"lon":12.4829321,"country":"IT","state":"Lazio"}]
+    mocker.patch.object(call, "geo", return_value = mock_json_return )
+    m = WeatherCall('test')
+    #assert
+    with pytest.raises(TypeError):
+        #act
+        assert m.get_coordinates('roma', 1) == mock_json_return
+
+
+
+def test_get_coordinates_fail(mocker):
+    #arrage
+    mock_json_return = {"cod":401, "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."}
+    mocker.patch.object(call, "geo", return_value = mock_json_return )
+    m = WeatherCall('test')
+    #assert
+    with pytest.raises(TypeError):
+        #act
+        m.get_coordinates('roma', 1)
+
+
+def test_get_weather_passes(mocker):
+    #arrage
+    mock_json_return = {"coord":{"lon":12.4829,"lat":41.8933},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}],"base":"stations","main":{"temp":285.51,"feels_like":284.76,"temp_min":283.38,"temp_max":287.2,"pressure":1006,"humidity":75},"visibility":10000,"wind":{"speed":1.03,"deg":110},"clouds":{"all":0},"dt":1669221304,"sys":{"type":2,"id":2000926,"country":"IT","sunrise":1669183751,"sunset":1669218241},"timezone":3600,"id":3169070,"name":"Rome","cod":200}
+    mocker.patch.object(call, "weather", return_value = mock_json_return )
+    m = WeatherCall('test')
+    #assert
+    with pytest.raises(TypeError):
+        #act
+        m.get_weather(41.8933203, 12.4829321)
+
+
+
+def test_get_weather_fail(mocker):
+    #arrage
+    mock_json_return = {"cod":401, "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."}
+    mocker.patch.object(call, "weather", return_value = mock_json_return )
+    m = WeatherCall('test')
+    #assert
+    with pytest.raises(TypeError):
+        #act
+        m.get_weather(41.8933203, 12.4829321)
+        
