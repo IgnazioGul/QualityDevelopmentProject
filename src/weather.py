@@ -16,7 +16,7 @@ class WeatherCall:
         :return:  if the error occurs, the method returns an exception
         """
         response = self.check(OPEN_WEATHER_KEY)
-        if response == 401:
+        if response == '401':
             raise TypeError("Invalid Key")
         return response
 
