@@ -10,36 +10,39 @@ OPEN_WEATHER_CITY = os.getenv('OPEN_WEATHER_CITY')
 
 class WeatherCall:
 
-    def check_key(self) -> str | TypeError:
+    @staticmethod
+    def check_key() -> str | TypeError:
         """
         check_key method checks if the key is correct for the API call
         :return:  if the error occurs, the method returns an exception
         """
-        response = self.check(OPEN_WEATHER_KEY)
+        response = WeatherCall.check(OPEN_WEATHER_KEY)
         if response == '401':
             raise TypeError("Invalid Key")
         return response
 
-    def get_coordinates(self, city: str, limit: int) -> dict | TypeError:
+    @staticmethod
+    def get_coordinates(city: str, limit: int) -> dict | TypeError:
         """
         the get_coordinates method executes an API call which, given a city, returns its coordinates
         :param city: the city taken to have its coordinates
         :param limit:the maximum number of values chosen
         :return: the json containing the coordinates
         """
-        response = self.geo_response(OPEN_WEATHER_KEY, city, limit)
+        response = WeatherCall.geo_response(OPEN_WEATHER_KEY, city, limit)
         if "cod" in response:
             raise TypeError("Error Call")
         return response
 
-    def get_weather(self, lat: float, lon: float) -> dict | TypeError:
+    @staticmethod
+    def get_weather(lat: float, lon: float) -> dict | TypeError:
         """
         the get_weather method executes an API call which, given latitude and longitude, returns its weather
         :param lat: latitude
         :param lon: longitude
         :return: the json containing all the information on the weather of the city
         """
-        response = self.weather_response(OPEN_WEATHER_KEY, lat, lon)
+        response = WeatherCall.weather_response(OPEN_WEATHER_KEY, lat, lon)
         if "cod" in response and response['cod'] != 200:
             raise TypeError("Error Call")
         return response
