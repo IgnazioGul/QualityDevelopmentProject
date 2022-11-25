@@ -1,9 +1,7 @@
 from src.weather import WeatherCall
 from pytest_mock import MockerFixture
-import pytest
 import os
 from dotenv import load_dotenv
-import requests
 
 load_dotenv()
 OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
