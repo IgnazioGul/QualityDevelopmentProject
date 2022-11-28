@@ -1,5 +1,5 @@
 from telegram import InputTextMessageContent, InlineQueryResultArticle, Update
-from telegram.ext import ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes
 from uuid import uuid4
 from .weather import WeatherCall
 import os
