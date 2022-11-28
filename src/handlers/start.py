@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ Sends a message on /start with three inline button attached. """
+    print ( context.args)
 
     keyboard = [[InlineKeyboardButton(
         'Inizia la ricerca', switch_inline_query_current_chat="")]]

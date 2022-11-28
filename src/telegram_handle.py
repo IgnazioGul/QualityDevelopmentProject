@@ -18,13 +18,12 @@ load_dotenv()
 # Get env variable
 OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
 
-# initialize weatherCall instance
-weatherCall = WeatherCall(OPEN_WEATHER_KEY)
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ Handle the inline query. This is run when you type: @meteounicitbot <query>"""
     query = update.inline_query.query
+    print ( context.args)
 
     if query == "":
         return
@@ -32,7 +31,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     results = []
     locations = None
     try:
-        locations = weatherCall.get_coordinates(query, 5)
+        locations = WeatherCall.get_coordinates(query, 5)
     except TypeError:
         locations = []
 
@@ -50,27 +49,6 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         )
 
     await update.inline_query.answer(results)
-
-
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    await query.answer()
-
-    await query.edit_message_text(text=f"Selected option: {query.data}")
-
-
-async def delete_message(update: Update, context: ContextTypes.DEFAULT_TYPE, chat_id: int) -> int:
-    user = update.message.from_user
-    logger.info("edit of %s: %s", user.first_name, update.message.text)
-
-    update.message.delete(chat_id=chat_id,
-                          message_id='IM STUCK HERE')  # INPUT HERE
-
-    return ConversationHandler.END
 
 
 meteo_prop = {
@@ -91,17 +69,15 @@ meteo_prop = {
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Ask the user for info about the selected predefined choice."""
+
     text = update.message.text
     coordinate = str(text).split(",")
-    meteo = weatherCall.get_weather(coordinate[0], coordinate[1])
-    weather = meteo['weather'][0]
+    meteo = WeatherCall.get_weather(coordinate[0], coordinate[1])
 
+    print ( context.args)
     message = get_message(meteo)
 
-    await update.message.reply_photo(f"https://source.unsplash.com/random?{meteo['name']}+{weather['description']}", f"{weather['description']}")
-
     await update.message.reply_text(message)
-
 
 def get_message(meteo: meteo_prop) -> str:
     main = meteo['main']
