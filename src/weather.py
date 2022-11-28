@@ -59,5 +59,5 @@ class WeatherCall:
 
     @staticmethod
     def weather_response(key: str, lat: float, lon: float) -> dict:
-        res = requests.get(f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&appid={key}", timeout=10).json()
+        res = requests.get(f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&units=metric&appid={key}", timeout=10).json()
         return res
