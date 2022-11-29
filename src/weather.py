@@ -1,12 +1,11 @@
 import os
 from dotenv import load_dotenv
+from configparser import ConfigParser
 import requests
 
+constants = ConfigParser()
+constants.read("constants.ini")
 load_dotenv()
-OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
-OPEN_WEATHER_CHECK = os.getenv('OPEN_WEATHER_CHECK')
-OPEN_WEATHER_GEO = os.getenv('OPEN_WEATHER_GEO')
-OPEN_WEATHER_CITY = os.getenv('OPEN_WEATHER_CITY')
 
 class WeatherCall:
 
@@ -16,7 +15,7 @@ class WeatherCall:
         check_key method checks if the key is correct for the API call
         :return:  if the error occurs, the method returns an exception
         """
-        response = WeatherCall.check(OPEN_WEATHER_KEY)
+        response = WeatherCall.check(os.getenv('OPEN_WEATHER_KEY'))
         if response == '401':
             raise TypeError("Invalid Key")
         return response
@@ -29,7 +28,7 @@ class WeatherCall:
         :param limit:the maximum number of values chosen
         :return: the json containing the coordinates
         """
-        response = WeatherCall.geo_response(OPEN_WEATHER_KEY, city, limit)
+        response = WeatherCall.geo_response(os.getenv('OPEN_WEATHER_KEY'), city, limit)
         if "cod" in response:
             raise TypeError("Error Call")
         return response
@@ -42,22 +41,22 @@ class WeatherCall:
         :param lon: longitude
         :return: the json containing all the information on the weather of the city
         """
-        response = WeatherCall.weather_response(OPEN_WEATHER_KEY, lat, lon)
+        response = WeatherCall.weather_response(os.getenv('OPEN_WEATHER_KEY'), lat, lon)
         if "cod" in response and response['cod'] != 200:
             raise TypeError("Error Call")
         return response
 
     @staticmethod
     def check(key: str) -> str:
-        res = requests.get(OPEN_WEATHER_CHECK + key, timeout=10).json()['cod']
+        res = requests.get(constants.get('CONSTANTS','OPEN_WEATHER_CHECK') + key, timeout=10).json()['cod']
         return res
 
     @staticmethod
     def geo_response(key: str, city: str, limit: int) -> dict:
-        res = requests.get(f"{OPEN_WEATHER_GEO}q={city}&limit={limit}&appid={key}", timeout=10).json()
+        res = requests.get( f"{constants.get('CONSTANTS','OPEN_WEATHER_GEO')}q={city}&limit={limit}&appid={key}", timeout=10).json()
         return res
 
     @staticmethod
     def weather_response(key: str, lat: float, lon: float) -> dict:
-        res = requests.get(f"{OPEN_WEATHER_CITY}lat={lat}&lon={lon}&units=metric&appid={key}", timeout=10).json()
+        res = requests.get(f"{constants.get('CONSTANTS','OPEN_WEATHER_CITY')}lat={lat}&lon={lon}&units=metric&appid={key}", timeout=10).json()
         return res

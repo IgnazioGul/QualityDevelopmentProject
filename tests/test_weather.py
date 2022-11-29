@@ -32,11 +32,11 @@ def test_get_coordinates_passes(mocker: MockerFixture):
     mocker.patch("src.weather.WeatherCall.geo_response", return_value = mock_json_return )
     try:
         #act
-        WeatherCall.get_coordinates('roma', 1)
+        res = WeatherCall.get_coordinates('roma', 1)
     except TypeError:
         #assert
         assert False
-    assert WeatherCall.get_coordinates('roma', 1) == mock_json_return
+    assert res == mock_json_return
 
 def test_get_coordinates_fail(mocker: MockerFixture):
     '''tests the get_coordinates function when the response gives a 401 code'''
@@ -57,11 +57,11 @@ def test_get_weather_passes(mocker: MockerFixture):
     mocker.patch("src.weather.WeatherCall.weather_response", return_value = mock_json_return )
     try:
         #act
-        WeatherCall.get_weather(41.8933203, 12.4829321)
+        res = WeatherCall.get_weather(41.8933203, 12.4829321)
     except TypeError:
         #assert
         assert False
-    assert WeatherCall.get_weather(41.8933203, 12.4829321) == mock_json_return
+    assert res == mock_json_return
 
 def test_get_weather_fail(mocker: MockerFixture):
     '''tests the get_weather function when the response gives a 401 code'''
