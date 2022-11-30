@@ -15,7 +15,7 @@ class WeatherCall:
         check_key method checks if the key is correct for the API call
         :return:  if the error occurs, the method returns an exception
         """
-        response = WeatherCall.check(os.getenv('OPEN_WEATHER_KEY'))
+        response = WeatherCall.check(os.getenv(constants.get('KEY', 'WEATHER_KEY_NAME')))
         if response == '401':
             raise TypeError("Invalid Key")
         return response
@@ -28,7 +28,7 @@ class WeatherCall:
         :param limit:the maximum number of values chosen
         :return: the json containing the coordinates
         """
-        response = WeatherCall.geo_response(os.getenv('OPEN_WEATHER_KEY'), city, limit)
+        response = WeatherCall.geo_response(os.getenv(constants.get('KEY', 'WEATHER_KEY_NAME')), city, limit)
         if "cod" in response:
             raise TypeError("Error Call")
         return response
@@ -41,7 +41,7 @@ class WeatherCall:
         :param lon: longitude
         :return: the json containing all the information on the weather of the city
         """
-        response = WeatherCall.weather_response(os.getenv('OPEN_WEATHER_KEY'), lat, lon)
+        response = WeatherCall.weather_response(os.getenv(constants.get('KEY', 'WEATHER_KEY_NAME')), lat, lon)
         if "cod" in response and response['cod'] != 200:
             raise TypeError("Error Call")
         return response
