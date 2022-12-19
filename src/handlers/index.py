@@ -1,6 +1,5 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from src.weather import WeatherCall
 import os
 from dotenv import load_dotenv
 import logging
