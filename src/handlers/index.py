@@ -1,12 +1,11 @@
-from telegram import Update, InputTextMessageContent, InlineQueryResultArticle
+from telegram import Update
 from telegram.ext import ContextTypes
-from uuid import uuid4
 from src.weather import WeatherCall
 import os
 from dotenv import load_dotenv
 import logging
 
-from src.services.index import start_service
+from src.services.index import start_service, get_city_by_query
 
 # Enable logging
 logging.basicConfig(
@@ -30,31 +29,12 @@ async def start(update: Update, context: ContextTypes) -> None:
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ Handle the inline query. This is run when you type: @meteounicitbot <query>"""
     query = update.inline_query.query
-    print(context.args)
+    logger.info('inline query handler %s', context.user_data )
 
     if query == "":
         return None
-
-    results = []
-    locations = None
-    try:
-        locations = WeatherCall.get_coordinates(query, 5)
-    except TypeError:
-        locations = []
-
-    for location in locations:
-        results.append(
-            InlineQueryResultArticle(
-                id=str(uuid4()),
-                title=f"{ location['name'] if 'name' in location else '' }, { location['state'] if 'state' in location else '' } - { location['country'] if 'state' in location else '' } ",
-                thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Weather-sun-clouds-rain.svg/640px-Weather-sun-clouds-rain.svg.png",
-                thumb_width=180,
-                thumb_height=180,
-                input_message_content=InputTextMessageContent(
-                    f"{location['lat']},{location['lon']}"),
-            ),
-        )
-
+    
+    results = await get_city_by_query(query)
     await update.inline_query.answer(results)
 
 
@@ -71,7 +51,8 @@ meteo_prop = {
     'timezone': int,
     'id': int,
     'name': str,
-    'cod': int}
+    'cod': int
+    }
 
 
 
