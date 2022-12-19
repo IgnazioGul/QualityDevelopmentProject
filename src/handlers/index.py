@@ -28,3 +28,36 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text('Benvenuto in weater_bot\nrimani aggiornato sul meteo con pochi click', reply_markup=reply_markup)
+
+
+
+async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Handle the inline query. This is run when you type: @meteounicitbot <query>"""
+    query = update.inline_query.query
+    print(context.args)
+
+    if query == "":
+        return None
+
+    results = []
+    locations = None
+    try:
+        locations = WeatherCall.get_coordinates(query, 5)
+    except TypeError:
+        locations = []
+
+    for location in locations:
+        results.append(
+            InlineQueryResultArticle(
+                id=str(uuid4()),
+                title=f"{ location['name'] if 'name' in location else '' }, { location['state'] if 'state' in location else '' } - { location['country'] if 'state' in location else '' } ",
+                thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Weather-sun-clouds-rain.svg/640px-Weather-sun-clouds-rain.svg.png",
+                thumb_width=180,
+                thumb_height=180,
+                input_message_content=InputTextMessageContent(
+                    f"{location['lat']},{location['lon']}"),
+            ),
+        )
+
+    await update.inline_query.answer(results)
+
