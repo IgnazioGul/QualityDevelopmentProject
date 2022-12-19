@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 import logging
 
-from src.services.index import start_service, get_city_by_query
+from src.services.index import start_service, get_city_by_query, message_service
 
 # Enable logging
 logging.basicConfig(
@@ -33,61 +33,13 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     if query == "":
         return None
-    
+
     results = await get_city_by_query(query)
     await update.inline_query.answer(results)
-
-
-meteo_prop = {
-    'coord': {'lon': float, 'lat': float},
-    'weather': [{'id': float, 'main': str, 'description': str, 'icon': str}],
-    'base': str,
-    'main': {'temp': float, 'feels_like': float, 'temp_min': float, 'temp_max': float, 'pressure': float, 'humidity': float},
-    'visibility': float,
-    'wind': {'speed': float, 'deg': float},
-    'clouds': {'all': float},
-    'dt': int,
-    'sys': {'type': int, 'id': int, 'country': str, 'sunrise': int, 'sunset': int},
-    'timezone': int,
-    'id': int,
-    'name': str,
-    'cod': int
-    }
-
-
-
-def get_message(meteo: meteo_prop) -> str:
-    main = meteo['main']
-    message = ""
-    if 'name' in meteo:
-        message += f"Che tempo fa a {meteo['name']}?\n"
-    if 'temp' in main:
-        message += f"temp.: {main['temp']} C° 🌡\n"
-    if 'feels_like' in main:
-        message += f"temp. avvertita: {main['feels_like']} C° 🌡\n"
-    if 'temp_min' in main:
-        message += f"temp. min: {main['temp_min']} C° 🧊\n"
-    if 'temp_max' in main:
-        message += f"temp. max: {main['temp_max']} C° 🔥\n"
-    if 'pressure' in main:
-        message += f"pressione: {main['pressure']}\n"
-    if 'temp_max' in main:
-        message += f"umidità: {main['humidity']}% 💧\n"
-    if 'sea_level' in main:
-        message += f"livello del mare: {main['sea_level']} 🌊\n"
-
-    return message
-
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Ask the user for info about the selected predefined choice."""
 
-    text = update.message.text
-    coordinate = str(text).split(",")
-    meteo = WeatherCall.get_weather(coordinate[0], coordinate[1])
-
-    print(context.args)
-    message = get_message(meteo)
-
-    await update.message.reply_text(message)
+    logger.info('Message handler %s', context.user_data )
+    await message_service(update)
     
