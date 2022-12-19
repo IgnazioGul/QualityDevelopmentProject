@@ -1,10 +1,12 @@
-from telegram import InlineKeyboardButton, Update, InlineKeyboardMarkup, InputTextMessageContent, InlineQueryResultArticle
+from telegram import Update, InputTextMessageContent, InlineQueryResultArticle
 from telegram.ext import ContextTypes
 from uuid import uuid4
 from src.weather import WeatherCall
 import os
 from dotenv import load_dotenv
 import logging
+
+from src.services.index import start_service
 
 # Enable logging
 logging.basicConfig(
@@ -18,16 +20,10 @@ load_dotenv()
 # Get env variable
 OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start(update: Update, context: ContextTypes) -> None:
     """ Sends a message on /start with three inline button attached. """
-    print(context.args)
-
-    keyboard = [[InlineKeyboardButton(
-        'Inizia la ricerca', switch_inline_query_current_chat="")]]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    await update.message.reply_text('Benvenuto in weater_bot\nrimani aggiornato sul meteo con pochi click', reply_markup=reply_markup)
+    logger.info('Start handler %s', context.user_data )
+    await start_service(update)
 
 
 
