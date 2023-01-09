@@ -1,9 +1,6 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-import os
-from dotenv import load_dotenv
 import logging
-
 from src.services.index import start_service, get_city_by_query, message_service
 
 # Enable logging
@@ -11,12 +8,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-
-# init dot env
-load_dotenv()
-
-# Get env variable
-OPEN_WEATHER_KEY = os.getenv('OPEN_WEATHER_KEY')
 
 async def start(update: Update, context: ContextTypes) -> None:
     """ Sends a message on /start with three inline button attached. """
