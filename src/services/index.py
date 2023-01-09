@@ -68,11 +68,12 @@ meteo_prop = {
     'id': int,
     'name': str,
     'cod': int
-    }
-
+}
 
 
 def get_message(meteo: meteo_prop) -> str:
+    if meteo == {}:
+        return ""
     main = meteo['main']
     message = ""
     if 'name' in meteo:
@@ -87,7 +88,7 @@ def get_message(meteo: meteo_prop) -> str:
         message += f"temp. max: {main['temp_max']} C° 🔥\n"
     if 'pressure' in main:
         message += f"pressione: {main['pressure']}\n"
-    if 'temp_max' in main:
+    if 'humidity' in main:
         message += f"umidità: {main['humidity']}% 💧\n"
     if 'sea_level' in main:
         message += f"livello del mare: {main['sea_level']} 🌊\n"
