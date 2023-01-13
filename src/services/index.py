@@ -10,7 +10,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def start_service(update: Update):
+async def start_service(update: Update) -> Update:
     """ Sends a message on /start with three inline button attached. """
 
     keyboard = [[InlineKeyboardButton(
@@ -21,19 +21,19 @@ async def start_service(update: Update):
     await update.message.reply_text('Benvenuto in weater_bot\nrimani aggiornato sul meteo con pochi click', reply_markup=reply_markup)
 
 
-async def get_city_by_query(query):
+async def get_city_by_query(query) -> InlineQueryResultArticle:
     results = []
-    locations = None
+    locations = []
     try:
         locations = WeatherCall.get_coordinates(query, 5)
     except TypeError:
-        locations = []
+        pass
 
     for location in locations:
         results.append(
             InlineQueryResultArticle(
                 id=str(uuid4()),
-                title=f"{ location['name'] if 'name' in location else '' }, { location['state'] if 'state' in location else '' } - { location['country'] if 'state' in location else '' } ",
+                title=f"{ location.get('name', '') }, { location.get('state', '') } - { location.get('coutry', '') } ",
                 thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Weather-sun-clouds-rain.svg/640px-Weather-sun-clouds-rain.svg.png",
                 thumb_width=180,
                 thumb_height=180,
@@ -45,7 +45,7 @@ async def get_city_by_query(query):
     return results
 
 
-async def message_service(update: Update):
+async def message_service(update: Update) -> Update:
     text = update.message.text
     coordinate = str(text).split(",")
     meteo = WeatherCall.get_weather(coordinate[0], coordinate[1])
