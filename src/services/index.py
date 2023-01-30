@@ -2,6 +2,8 @@ from telegram import InputTextMessageContent, InlineQueryResultArticle, InlineKe
 from src.weather import WeatherCall
 import logging
 from uuid import uuid4
+from typing import Dict, List, Union
+
 
 # Enable logging
 logging.basicConfig(
@@ -53,7 +55,6 @@ async def message_service(update: Update) -> Update:
 
     await update.message.reply_text(message)
 
-from typing import Dict, List, Union
 
 MeteoProp = Dict[str, Union[Dict[str, Union[float, int, str]], 
     List[Dict[str, Union[float, int, str]]], float, int, str]]
