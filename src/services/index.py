@@ -53,25 +53,13 @@ async def message_service(update: Update) -> Update:
 
     await update.message.reply_text(message)
 
+from typing import Dict, List, Union
 
-meteo_prop = {
-    'coord': {'lon': float, 'lat': float},
-    'weather': [{'id': float, 'main': str, 'description': str, 'icon': str}],
-    'base': str,
-    'main': {'temp': float, 'feels_like': float, 'temp_min': float, 'temp_max': float, 'pressure': float, 'humidity': float},
-    'visibility': float,
-    'wind': {'speed': float, 'deg': float},
-    'clouds': {'all': float},
-    'dt': int,
-    'sys': {'type': int, 'id': int, 'country': str, 'sunrise': int, 'sunset': int},
-    'timezone': int,
-    'id': int,
-    'name': str,
-    'cod': int
-}
+MeteoProp = Dict[str, Union[Dict[str, Union[float, int, str]], 
+    List[Dict[str, Union[float, int, str]]], float, int, str]]
 
 
-def get_message(meteo: meteo_prop) -> str:
+def get_message(meteo: MeteoProp) -> str:
     if meteo == {}:
         return ""
     main = meteo['main']
