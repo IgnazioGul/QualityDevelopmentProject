@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 ## Run
 
-```flask --app qd_project run```
+```py bot.py```
 
   
 
