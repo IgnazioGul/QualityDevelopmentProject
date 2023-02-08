@@ -1,5 +1,6 @@
 import os
 import logging
+from configparser import ConfigParser
 from dotenv import load_dotenv
 from telegram.ext import CommandHandler, ApplicationBuilder, InlineQueryHandler, MessageHandler, filters
 from src.handlers.index import start, inline_query, message_handler
@@ -11,8 +12,12 @@ logging.basicConfig(
 # init dot env
 load_dotenv()
 
+constants = ConfigParser()
+constants.read("constants.ini")
+load_dotenv()
+
 # Get env variable
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_BOT_TOKEN = os.getenv(constants.get('KEY', 'TELEGRAM_BOT_TOKEN_NAME'))
 
 def main() -> None:
     """Run the bot."""
